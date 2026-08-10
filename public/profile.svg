@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="560" viewBox="0 0 480 560" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#312e81"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="person" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a5b4fc"/>
+      <stop offset="1" stop-color="#7dd3fc"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M52 0H0V52" fill="none" stroke="#e0e7ff" stroke-opacity="0.08"/>
+    </pattern>
+    <filter id="blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="36"/>
+    </filter>
+  </defs>
+
+  <rect width="480" height="560" fill="url(#bg)"/>
+  <rect width="480" height="560" fill="url(#grid)"/>
+  <circle cx="240" cy="250" r="190" fill="url(#glow)" filter="url(#blur)"/>
+
+  <!-- decorative code symbols -->
+  <text x="60" y="104" font-family="ui-monospace, monospace" font-size="26" font-weight="bold" fill="#818cf8" fill-opacity="0.85">{ }</text>
+  <text x="384" y="160" font-family="ui-monospace, monospace" font-size="26" font-weight="bold" fill="#38bdf8" fill-opacity="0.85">&lt;/&gt;</text>
+  <text x="344" y="470" font-family="ui-monospace, monospace" font-size="24" font-weight="bold" fill="#a5b4fc" fill-opacity="0.7">0x1F</text>
+  <circle cx="96" cy="420" r="5" fill="#38bdf8" fill-opacity="0.6"/>
+  <circle cx="420" cy="300" r="4" fill="#a5b4fc" fill-opacity="0.5"/>
+
+  <!-- silhouette -->
+  <circle cx="240" cy="212" r="70" fill="url(#person)"/>
+  <path d="M126 512c0-78 52-128 114-128s114 50 114 128v64H126z" fill="url(#person)"/>
+
+  <!-- availability badge -->
+  <g>
+    <rect x="298" y="150" width="126" height="34" rx="17" fill="#0f172a" fill-opacity="0.85"/>
+    <circle cx="316" cy="167" r="5" fill="#34d399"/>
+    <text x="332" y="172" font-family="sans-serif" font-size="12.5" font-weight="600" fill="#e2e8f0">Available</text>
+  </g>
+</svg>
