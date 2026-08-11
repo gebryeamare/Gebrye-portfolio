@@ -1,17 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
+  Check,
   CheckCircle2,
+  Copy,
   Loader2,
   Mail,
   MapPin,
   Send,
   AlertCircle,
 } from "lucide-react";
+
+import type { Icon } from "@/types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -56,8 +61,18 @@ type FormStatus =
   | { state: "success"; demoMode: boolean }
   | { state: "error"; message: string };
 
+interface ContactItem {
+  label: string;
+  value: string;
+  href?: string;
+  icon: Icon;
+  onCopy?: () => void;
+  copied?: boolean;
+}
+
 export default function Contact() {
   const [status, setStatus] = useState<FormStatus>({ state: "idle" });
+  const [copied, setCopied] = useState(false);
 
   const {
     register,
@@ -114,12 +129,21 @@ export default function Contact() {
     }
   }
 
-  const contactItems = [
+  async function copyEmail() {
+    const ok = await copyToClipboard(SITE.email);
+    if (!ok) return; // Clipboard unavailable — the mailto link still works.
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  }
+
+  const contactItems: ContactItem[] = [
     {
       label: "Email",
       value: SITE.email,
       href: `mailto:${SITE.email}`,
       icon: Mail,
+      onCopy: copyEmail,
+      copied,
     },
     {
       label: "GitHub",
@@ -171,12 +195,12 @@ export default function Contact() {
                               : undefined,
                           }
                         : {})}
-                      className="glass-card glass-card-hover group flex items-center gap-3.5 rounded-2xl p-5"
+                      className="glass-card glass-card-hover group relative flex items-center gap-3.5 rounded-2xl p-5"
                     >
                       <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600/15 to-sky-500/15 ring-1 ring-indigo-500/20">
                         <item.icon className="size-5 text-indigo-600 transition-transform duration-300 group-hover:scale-110 dark:text-indigo-300" />
                       </span>
-                      <span className="min-w-0">
+                      <span className="min-w-0 flex-1">
                         <span className="block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                           {item.label}
                         </span>
@@ -184,6 +208,35 @@ export default function Contact() {
                           {item.value}
                         </span>
                       </span>
+                      {item.onCopy && (
+                        <span className="relative">
+                          {item.copied ? (
+                            <motion.span
+                              initial={{ scale: 0.6, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              className="flex size-7 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300"
+                            >
+                              <Check className="size-3.5" />
+                            </motion.span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                // Keep the click from also triggering the
+                                // surrounding mailto / profile link navigation.
+                                event.preventDefault();
+                                event.stopPropagation();
+                                item.onCopy?.();
+                              }}
+                              className="flex size-7 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-200 hover:bg-indigo-500/10 hover:text-indigo-500"
+                              aria-label={`Copy ${item.label.toLowerCase()} to clipboard`}
+                              title={`Copy ${item.label.toLowerCase()}`}
+                            >
+                              <Copy className="size-3.5" />
+                            </button>
+                          )}
+                        </span>
+                      )}
                     </Wrapper>
                   );
                 })}
@@ -354,4 +407,28 @@ function FieldError({ message }: { message: string }) {
       {message}
     </p>
   );
+}
+
+/** Copy text to the clipboard, falling back to the legacy execCommand path. */
+async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Fallback for browsers / contexts without the async Clipboard API.
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return ok;
+    } catch {
+      return false;
+    }
+  }
 }

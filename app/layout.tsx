@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
+import { BackToTop } from "@/components/back-to-top";
 import { Providers } from "@/components/providers";
 import { SITE } from "@/lib/data";
 import "./globals.css";
@@ -92,6 +93,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <BackToTop />
         </Providers>
       </body>
     </html>

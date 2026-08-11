@@ -14,7 +14,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const lines = [
   "Gebrye Amare",
   "Computer Engineer & Full-Stack Developer",
-  "gebryeamare@gmail.com | Ethiopia | github.com/gebryeamare",
+  "gebryeamare5@gmail.com | Ethiopia | github.com/gebryeamare",
   "",
   "EDUCATION",
   "BSc in Electrical and Computer Engineering - Computer Engineering",

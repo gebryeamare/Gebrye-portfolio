@@ -1,15 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarDays,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   FolderGit2,
+  Images,
   Sparkles,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,12 +20,17 @@ import { SectionHeading } from "@/components/section-heading";
 import { GitHubIcon } from "@/components/social-icons";
 import { PROJECTS, PROJECT_FILTERS } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/types";
 
 type Filter = (typeof PROJECT_FILTERS)[number];
 
 export default function Projects() {
   const [filter, setFilter] = useState<Filter>("All");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{
+    project: Project;
+    index: number;
+  } | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -89,21 +97,23 @@ export default function Projects() {
                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-2xl hover:shadow-indigo-500/15"
               >
-                {/* Cover */}
-                <Link
-                  href="#projects"
-                  onClick={(e) => e.preventDefault()}
-                  className="relative block aspect-[16/9] overflow-hidden"
-                  aria-label={`${project.title} — view details`}
+                {/* Cover — click to open the screenshot gallery */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLightbox({ project, index: 0 })
+                  }
+                  className="group/cover relative block aspect-[16/9] cursor-zoom-in overflow-hidden text-left"
+                  aria-label={`${project.title} — open screenshot gallery`}
                 >
                   <Image
                     src={project.image}
                     alt={project.alt}
                     fill
                     sizes="(min-width: 1024px) 576px, 100vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    className="object-cover transition-transform duration-500 group-hover/cover:scale-[1.04]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover/cover:opacity-40" />
                   {project.highlight && (
                     <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1 text-xs font-semibold text-indigo-600 shadow backdrop-blur dark:text-indigo-300">
                       <Sparkles className="size-3.5" />
@@ -114,7 +124,12 @@ export default function Projects() {
                     <CalendarDays className="size-3.5" />
                     {project.period}
                   </span>
-                </Link>
+                  {/* Zoom hint */}
+                  <span className="absolute bottom-4 left-4 inline-flex translate-y-1 items-center gap-1.5 rounded-full bg-black/55 px-3 py-1 text-xs font-medium text-white opacity-0 backdrop-blur transition-all duration-300 group-hover/cover:translate-y-0 group-hover/cover:opacity-100">
+                    <Images className="size-3.5" />
+                    View screenshots
+                  </span>
+                </button>
 
                 {/* Body */}
                 <div className="flex flex-1 flex-col p-6 sm:p-7">
@@ -217,9 +232,239 @@ export default function Projects() {
           </motion.p>
         )}
       </div>
+
+      {/* Screenshot lightbox */}
+      <AnimatePresence>
+        {lightbox && (
+          <ProjectLightbox
+            project={lightbox.project}
+            initialIndex={lightbox.index}
+            onClose={() => setLightbox(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/*  Lightbox                                                           */
+/* ------------------------------------------------------------------ */
+
+interface ProjectLightboxProps {
+  project: Project;
+  initialIndex: number;
+  onClose: () => void;
+}
+
+function ProjectLightbox({
+  project,
+  initialIndex,
+  onClose,
+}: ProjectLightboxProps) {
+  const images = useMemo(
+    () => [project.image, ...(project.gallery ?? [])].filter(uniqueStrings),
+    [project]
+  );
+  const [index, setIndex] = useState(initialIndex);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  const go = useCallback((dir: 1 | -1) => {
+    setIndex((current) => {
+      // Wrap around (0 -> last, last -> 0); safe even for a single image.
+      return (current + dir + images.length) % images.length;
+    });
+  }, [images.length]);
+
+  /* Lock body scroll + restore focus + restore scroll on unmount */
+  useEffect(() => {
+    const original = document.body.style.overflow;
+    previouslyFocusedRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+      previouslyFocusedRef.current?.focus();
+    };
+  }, []);
+
+  /* Focus close button on open */
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
+
+  /* Keyboard navigation + focus trap */
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        go(1);
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        go(-1);
+        return;
+      }
+      // Keep Tab cycling inside the dialog.
+      if (event.key === "Tab" && containerRef.current) {
+        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+        if (event.shiftKey && (active === first || active === containerRef.current)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [go, onClose]);
+
+  const hasMultiple = images.length > 1;
+
+  return (
+    <motion.div
+      ref={containerRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md sm:p-8"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${project.title} screenshot gallery`}
+      onClick={onClose}
+    >
+      {/* Close */}
+      <Button
+        ref={closeButtonRef}
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        className="absolute right-4 top-4 z-10 size-10 rounded-full bg-white/10 text-white hover:bg-white/20 hover:text-white"
+        onClick={onClose}
+        aria-label="Close gallery"
+      >
+        <X className="size-5" />
+      </Button>
+
+      {/* Image */}
+      <motion.figure
+        initial={{ opacity: 0, scale: 0.96, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="relative flex max-h-full w-full max-w-4xl flex-col"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-black/40 shadow-2xl ring-1 ring-white/15">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={images[index]}
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.99 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={images[index]}
+                alt={`${project.title} screenshot ${index + 1} of ${images.length}`}
+                fill
+                sizes="(min-width: 1024px) 896px, 100vw"
+                className="object-contain"
+                priority
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Prev / Next */}
+          {hasMultiple && (
+            <>
+              <button
+                type="button"
+                onClick={() => go(-1)}
+                className="absolute left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-80 backdrop-blur transition-all duration-200 hover:scale-105 hover:bg-indigo-600/80 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-white sm:left-5"
+                aria-label="Previous screenshot"
+              >
+                <ChevronLeft className="size-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => go(1)}
+                className="absolute right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-80 backdrop-blur transition-all duration-200 hover:scale-105 hover:bg-indigo-600/80 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-white sm:right-5"
+                aria-label="Next screenshot"
+              >
+                <ChevronRight className="size-5" />
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Caption */}
+        <figcaption className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-white/90">
+          <span className="font-medium">{project.title}</span>
+          {hasMultiple ? (
+            <span className="flex items-center gap-3">
+              <span className="font-mono text-xs text-white/60">
+                {index + 1} / {images.length}
+              </span>
+              {/* Thumbnails */}
+              <span className="hidden items-center gap-1.5 sm:flex">
+                {images.map((src, i) => (
+                  <button
+                    key={src}
+                    type="button"
+                    onClick={() => setIndex(i)}
+                    aria-label={`Go to screenshot ${i + 1}`}
+                    className={cn(
+                      "relative size-9 overflow-hidden rounded-md ring-2 transition-all duration-200",
+                      i === index
+                        ? "ring-indigo-500"
+                        : "opacity-60 ring-transparent hover:opacity-100"
+                    )}
+                  >
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="36px"
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </span>
+            </span>
+          ) : (
+            <span className="font-mono text-xs text-white/60">1 / 1</span>
+          )}
+        </figcaption>
+      </motion.figure>
+    </motion.div>
+  );
+}
+
+function uniqueStrings(value: string, index: number, array: string[]) {
+  return array.indexOf(value) === index;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
 
 interface ProjectLinkProps {
   href?: string;

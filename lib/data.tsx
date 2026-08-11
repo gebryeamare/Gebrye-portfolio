@@ -70,10 +70,10 @@ export const SITE = {
   intro:
     "I build intelligent, scalable, and user-focused digital solutions using modern web technologies, mobile development, machine learning, and secure software engineering.",
   tagline: "Building intelligent, secure, and modern digital solutions.",
-  // PLACEHOLDER — replace with the real deployment URL (or set NEXT_PUBLIC_SITE_URL).
-  url: "https://gebryeamare.dev",
-  // PLACEHOLDER — replace with the real email address.
-  email: "gebryeamare@gmail.com",
+  // Site URL. Override at build time with NEXT_PUBLIC_SITE_URL — defaults to
+  // the Vercel preview URL until a custom domain is connected.
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://gebrye-portfolio.vercel.app",
+  email: "gebryeamare5@gmail.com",
   location: "Ethiopia",
   github: "https://github.com/gebryeamare",
   githubUsername: "gebryeamare",
@@ -247,6 +247,11 @@ export const PROJECTS: Project[] = [
       "An intelligent web-based healthcare platform that uses machine learning to support patient triage and appointment management.",
     image: "/covers/patient-triage/cover.png",
     alt: "Intelligent Patient Triage and Appointment Management System cover",
+    gallery: [
+      "/covers/patient-triage/cover.png",
+      "/covers/patient-triage/cover-2.png",
+      "/covers/patient-triage/cover-3.png",
+    ],
     categories: ["Full-Stack", "Machine Learning"],
     technologies: ["Next.js", "React", "TypeScript", "Machine Learning", "Node.js", "PostgreSQL"],
     features: [
@@ -260,7 +265,7 @@ export const PROJECTS: Project[] = [
     period: "03/2026 – 05/2026",
     highlight: "Final BSc project · Grade A+",
     github: "https://github.com/gebryeamare",
-    demo: "",
+    demo: "https://github.com/gebryeamare",
   },
   {
     id: "mesob-gebeya",
@@ -269,6 +274,10 @@ export const PROJECTS: Project[] = [
       "A full-stack Ethiopian e-commerce platform designed to provide a modern online marketplace experience.",
     image: "/covers/mesob-gebeya/cover.png",
     alt: "Mesob Gebeya e-commerce platform cover",
+    gallery: [
+      "/covers/mesob-gebeya/cover.png",
+      "/covers/mesob-gebeya/cover-2.png",
+    ],
     categories: ["Full-Stack"],
     technologies: ["Next.js", "React", "TypeScript", "PostgreSQL", "Node.js", "Tailwind CSS"],
     features: [
@@ -282,8 +291,8 @@ export const PROJECTS: Project[] = [
       "PostgreSQL database",
     ],
     period: "07/2026 – 08/2026",
-    github: "",
-    demo: "",
+    github: "https://github.com/gebryeamare",
+    demo: "https://github.com/gebryeamare",
   },
   {
     id: "ethio-agri",
@@ -302,8 +311,8 @@ export const PROJECTS: Project[] = [
       "Future support for fruits, vegetables, crops, and domestic animals",
     ],
     period: "03/2025 – 06/2025",
-    github: "",
-    demo: "",
+    github: "https://github.com/gebryeamare",
+    demo: "https://github.com/gebryeamare",
   },
   {
     id: "cyber-risk",
@@ -312,6 +321,10 @@ export const PROJECTS: Project[] = [
       "A machine-learning-based system designed to analyze cybersecurity risks and provide intelligent risk insights.",
     image: "/covers/cyber-risk/cover.png",
     alt: "Cybersecurity Risk Analysis System cover",
+    gallery: [
+      "/covers/cyber-risk/cover.png",
+      "/covers/cyber-risk/cover-2.png",
+    ],
     categories: ["Cybersecurity", "Machine Learning"],
     technologies: ["Next.js", "Machine Learning", "Python", "TypeScript", "Data Analysis"],
     features: [
@@ -321,8 +334,8 @@ export const PROJECTS: Project[] = [
       "Data analysis workflows",
     ],
     period: "09/2025 – 01/2026",
-    github: "",
-    demo: "",
+    github: "https://github.com/gebryeamare",
+    demo: "https://github.com/gebryeamare",
   },
   {
     id: "advanced-school-management",
@@ -342,8 +355,8 @@ export const PROJECTS: Project[] = [
       "Admin dashboard",
     ],
     period: "2026",
-    github: "",
-    demo: "",
+    github: "https://github.com/gebryeamare",
+    demo: "https://github.com/gebryeamare",
   },
   {
     id: "ahadu-garage",
@@ -363,8 +376,8 @@ export const PROJECTS: Project[] = [
       "Admin dashboard",
     ],
     period: "2026",
-    github: "",
-    demo: "",
+    github: "https://github.com/gebryeamare",
+    demo: "https://github.com/gebryeamare",
   },
 ];
 

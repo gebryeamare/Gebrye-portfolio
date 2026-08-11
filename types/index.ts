@@ -36,6 +36,8 @@ export interface Project {
   description: string;
   image: string;
   alt: string;
+  /** Extra screenshots shown in the lightbox gallery (the main `image` is always included). */
+  gallery?: string[];
   categories: ProjectCategory[];
   technologies: string[];
   features: string[];

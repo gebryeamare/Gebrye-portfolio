@@ -89,9 +89,7 @@ export default function Footer() {
             © {year} {SITE.name}. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-xs text-muted-foreground">
-            <span>
-              Built with Next.js, TypeScript &amp; Tailwind CSS
-            </span>
+           
             <Button
               variant="ghost"
               size="icon-sm"
