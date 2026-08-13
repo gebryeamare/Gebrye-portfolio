@@ -1,0 +1,8 @@
+# Netlify deployment configuration
+# Next.js App Router is auto-detected by Netlify's runtime (no publish dir needed).
+[build]
+  command = "npm run build"
+
+# Next.js 16 requires Node >= 20.9 — pin a recent LTS so the build image is guaranteed.
+[build.environment]
+  NODE_VERSION = "22"
