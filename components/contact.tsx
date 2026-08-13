@@ -14,6 +14,7 @@ import {
   MapPin,
   Send,
   AlertCircle,
+  PhoneCall,
 } from "lucide-react";
 
 import type { Icon } from "@/types";
@@ -144,6 +145,12 @@ export default function Contact() {
       icon: Mail,
       onCopy: copyEmail,
       copied,
+    },
+    {
+      label: "Phone",
+      value: "+251 918-763-378",
+      href: "tel:+251918763378",
+      icon: PhoneCall,
     },
     {
       label: "GitHub",
