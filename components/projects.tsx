@@ -47,7 +47,7 @@ export default function Projects() {
           index={2}
           eyebrow="Featured Projects"
           title="Things I've built"
-          description="A selection of my academic and personal projects — spanning full-stack web platforms, machine learning systems, and security analysis tools."
+          description="A selection of my academic and personal projects — spanning full-stack web platforms, mobile apps, machine learning systems, and security analysis tools."
         />
 
         {/* Filters */}
