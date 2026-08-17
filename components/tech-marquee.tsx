@@ -14,6 +14,7 @@ import {
   Triangle,
   Wind,
   type LucideIcon,
+  BrainIcon,
 } from "lucide-react";
 
 const MARQUEE_ITEMS: Array<{ label: string; icon: LucideIcon }> = [
@@ -29,6 +30,7 @@ const MARQUEE_ITEMS: Array<{ label: string; icon: LucideIcon }> = [
   { label: "Machine Learning", icon: Brain },
   { label: "Cybersecurity", icon: Shield },
   { label: "Docker", icon: Container },
+{label:"pytorch",icon:BrainIcon },
   { label: "Tailwind CSS", icon: Wind },
   { label: "Git", icon: GitBranch },
   { label: "Full-Stack", icon: Layers },

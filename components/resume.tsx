@@ -47,12 +47,7 @@ export default function Resume() {
                   </a>
                 </Button>
               </div>
-              <p className="mt-5 text-xs text-muted-foreground">
-                File: {SITE.resume.fileName} · Replace it in{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
-                  /public/{SITE.resume.fileName}
-                </code>
-              </p>
+              
             </div>
           </div>
         </Reveal>

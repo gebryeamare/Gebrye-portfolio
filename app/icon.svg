@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Brand gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c3aed"/>
+      <stop offset="0.55" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <!-- Top glass light -->
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Bottom vignette for depth -->
+    <linearGradient id="shade" x1="0" y1="0.55" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e1b4b" stop-opacity="0"/>
+      <stop offset="1" stop-color="#1e1b4b" stop-opacity="0.3"/>
+    </linearGradient>
+    <!-- Lit letterforms: white → ice blue -->
+    <linearGradient id="glyph" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dimensional tile -->
+  <rect width="64" height="64" rx="17" fill="url(#bg)"/>
+  <rect width="64" height="64" rx="17" fill="url(#sheen)"/>
+  <rect width="64" height="64" rx="17" fill="url(#shade)"/>
+  <!-- Crisp inner hairline -->
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="16.25" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5"/>
+
+  <!--
+    Interlocked "GA" monogram — constructed geometry:
+    · G bowl = perfect circle arc (270°), bar terminating at the bowl centre
+    · A = sharp apex with crossbar on the SAME baseline as the G bar
+      → the two bars read as one continuous circuit trace across the mark
+    · The A's crossbar just kisses the G's bowl (fused monogram)
+  -->
+  <path
+    d="M 24 22.5 A 9.5 9.5 0 1 0 33.5 32 L 24 32 M 44 21.5 L 37 47 M 44 21.5 L 51 47 M 41.1 32 L 46.9 32"
+    fill="none"
+    stroke="url(#glyph)"
+    stroke-width="7.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Spark accent -->
+  <path
+    d="M 48 15.5 L 48 20.5 M 45.5 18 L 50.5 18"
+    fill="none"
+    stroke="#ffffff"
+    stroke-opacity="0.9"
+    stroke-width="1.7"
+    stroke-linecap="round"
+  />
+</svg>

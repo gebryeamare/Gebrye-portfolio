@@ -60,9 +60,8 @@ export const metadata: Metadata = {
     title: `${SITE.name} — ${SITE.title}`,
     description: SITE.intro,
   },
-  icons: {
-    icon: "/favicon.svg",
-  },
+  // Icons (icon.svg, favicon.ico, apple-icon.png) are auto-discovered
+  // from the app/ directory by Next.js — regenerate with `npm run generate:icons`.
 };
 
 export default function RootLayout({
