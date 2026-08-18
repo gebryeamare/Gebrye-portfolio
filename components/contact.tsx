@@ -282,7 +282,7 @@ export default function Contact() {
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Jane Doe"
+                    placeholder="Gebrye Amare"
                     autoComplete="name"
                     aria-invalid={errors.name ? true : undefined}
                     {...register("name")}
@@ -297,7 +297,7 @@ export default function Contact() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="jane@example.com"
+                    placeholder="gebryeamare5@gmail.com"
                     autoComplete="email"
                     aria-invalid={errors.email ? true : undefined}
                     {...register("email")}
