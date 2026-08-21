@@ -1,6 +1,6 @@
 # Gebrye Amare — Portfolio
 
-A modern, glassmorphism-styled portfolio built with **Next.js (App Router)**, **React**, **TypeScript**, and **Tailwind CSS v4**. It showcases projects, skills, experience, education, services, and a working contact form powered by Resend.
+A modern, glassmorphism-styled portfolio built with **Next.js (App Router)**, **React**, **TypeScript**, and **Tailwind CSS v4**. It showcases projects, skills, experience, education, services, and a working contact form powered by **Netlify Forms**.
 
 ## ✨ Features
 
@@ -8,7 +8,7 @@ A modern, glassmorphism-styled portfolio built with **Next.js (App Router)**, **
 - 📱 Fully responsive layout with a mobile slide-over menu
 - 🖼️ Project cards with category filters, expandable details, and a **screenshot lightbox** (keyboard navigable)
 - 🐙 GitHub section that fetches live profile + repo data from the public GitHub API (with a static fallback)
-- 📬 Contact form with client + server-side validation (zod + react-hook-form) and a honeypot anti-spam field
+- 📬 Contact form powered by Netlify Forms with client-side validation (zod + react-hook-form) and a honeypot anti-spam field
 - 📄 Resume / CV download section
 - ♿ Reduced-motion support, semantic markup, and ARIA-friendly components
 - 🔍 SEO metadata, `robots.txt`, and `sitemap.xml`
@@ -37,19 +37,16 @@ Create a `.env.local` file (see `.env.example` for reference):
 
 | Variable               | Required | Purpose                                      |
 | ---------------------- | -------- | -------------------------------------------- |
-| `RESEND_API_KEY`       | For email | Resend API key for the contact form         |
-| `RESEND_EMAIL_FROM`    | No       | Verified "from" address (defaults to Resend onboarding) |
-| `CONTACT_EMAIL`        | No       | Where contact messages are delivered (defaults to `SITE.email`) |
 | `NEXT_PUBLIC_SITE_URL` | No       | Deployment URL used for SEO metadata (falls back to `https://gebrye-portfolio.vercel.app`) |
 
-Without a `RESEND_API_KEY`, the contact form still works in **demo mode** and reports that no email provider is configured.
+The contact form is powered by **Netlify Forms**. No API keys are needed — configure email notifications in the Netlify dashboard under **Forms → Form notifications**.
 
 ## 🗂️ Project structure
 
 ```
-app/          # App Router pages, layout, metadata, SEO routes, contact API
+app/          # App Router pages, layout, metadata, SEO routes
 components/   # Sections + reusable UI components
-lib/          # Site data (lib/data.tsx), utilities, Resend client
+lib/          # Site data (lib/data.tsx), utilities
 public/       # Static assets (profile, resume PDF, project covers)
 types/        # Shared TypeScript types
 ```
@@ -65,13 +62,14 @@ Most content — name, links, projects, skills, experience, education, services 
 
 ## 🌐 Deploying
 
-The easiest way is [Vercel](https://vercel.com/new):
+Deploy to [Netlify](https://app.netlify.com):
 
 1. Push the repo to GitHub.
-2. Import it on Vercel.
-3. Add the environment variables above.
-4. Set `NEXT_PUBLIC_SITE_URL` to your production domain so SEO metadata is correct.
+2. Import the repo on Netlify.
+3. Build settings are already configured in `netlify.toml` (`npm run build`, Node 22).
+4. The contact form is automatically detected via the static `public/contact.html` file.
+5. Configure email notifications under **Forms → Form notifications** in the Netlify dashboard.
 
 ## 🛠️ Tech stack
 
-Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion · Radix UI · react-hook-form · zod · Resend
+Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion · Radix UI · react-hook-form · zod · Netlify Forms

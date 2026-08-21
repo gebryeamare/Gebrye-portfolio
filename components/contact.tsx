@@ -58,7 +58,7 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 
 type FormStatus =
   | { state: "idle" }
-  | { state: "loading" }
+  | { state: "submitting" }
   | { state: "success" }
   | { state: "error"; message: string };
 
@@ -92,24 +92,20 @@ export default function Contact() {
       return;
     }
 
-    setStatus({ state: "loading" });
+    setStatus({ state: "submitting" });
     try {
-      const encode = (data: Record<string, string>) => {
-        return Object.keys(data)
-          .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-          .join("&");
-      };
+      const params = new URLSearchParams();
+      params.append("form-name", "contact");
+      params.append("name", values.name);
+      params.append("email", values.email);
+      params.append("subject", values.subject);
+      params.append("message", values.message);
+      params.append("website", values.website ?? "");
 
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({
-          "form-name": "contact",
-          name: values.name,
-          email: values.email,
-          subject: values.subject,
-          message: values.message,
-        }),
+        body: params.toString(),
       });
 
       if (!response.ok) {
@@ -356,9 +352,9 @@ export default function Contact() {
                   type="submit"
                   size="lg"
                   className="w-full rounded-full sm:w-auto sm:min-w-44"
-                  disabled={status.state === "loading"}
+                  disabled={status.state === "submitting"}
                 >
-                  {status.state === "loading" ? (
+                  {status.state === "submitting" ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
                       Sending...
@@ -385,7 +381,7 @@ export default function Contact() {
                   <div>
                     <p className="font-semibold">Message sent successfully!</p>
                     <p className="mt-0.5 text-emerald-600/80 dark:text-emerald-300/80">
-                      Thank you for reaching out — I'll get back to you soon.
+                      Thank you for reaching out — I&apos;ll get back to you soon.
                     </p>
                   </div>
                 </div>
