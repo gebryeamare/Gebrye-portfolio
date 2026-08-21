@@ -59,7 +59,7 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 type FormStatus =
   | { state: "idle" }
   | { state: "loading" }
-  | { state: "success"; demoMode: boolean }
+  | { state: "success" }
   | { state: "error"; message: string };
 
 interface ContactItem {
@@ -88,16 +88,23 @@ export default function Contact() {
   async function onSubmit(values: ContactFormValues) {
     // Honeypot: silently succeed for bots.
     if (values.website) {
-      setStatus({ state: "success", demoMode: false });
+      setStatus({ state: "success" });
       return;
     }
 
     setStatus({ state: "loading" });
     try {
-      const response = await fetch("/api/contact", {
+      const encode = (data: Record<string, string>) => {
+        return Object.keys(data)
+          .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+          .join("&");
+      };
+
+      const response = await fetch("/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode({
+          "form-name": "contact",
           name: values.name,
           email: values.email,
           subject: values.subject,
@@ -105,19 +112,11 @@ export default function Contact() {
         }),
       });
 
-      const data = (await response.json()) as {
-        message?: string;
-        emailProviderConfigured?: boolean;
-      };
-
       if (!response.ok) {
-        throw new Error(data.message ?? "Something went wrong. Please try again.");
+        throw new Error("Something went wrong. Please try again.");
       }
 
-      setStatus({
-        state: "success",
-        demoMode: data.emailProviderConfigured === false,
-      });
+      setStatus({ state: "success" });
       reset();
     } catch (error) {
       setStatus({
@@ -272,10 +271,13 @@ export default function Contact() {
           {/* Form */}
           <Reveal delay={0.1}>
             <form
+              name="contact"
+              data-netlify="true"
               onSubmit={handleSubmit(onSubmit)}
               noValidate
               className="glass-card rounded-2xl p-6 sm:p-8"
             >
+              <input type="hidden" name="form-name" value="contact" />
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="name">Full Name</Label>
@@ -383,9 +385,7 @@ export default function Contact() {
                   <div>
                     <p className="font-semibold">Message sent successfully!</p>
                     <p className="mt-0.5 text-emerald-600/80 dark:text-emerald-300/80">
-                      {status.demoMode
-                        ? "Demo mode: the form is working, but no email provider is configured yet. Add RESEND_API_KEY to receive messages by email."
-                        : "Thank you for reaching out — I'll get back to you soon."}
+                      Thank you for reaching out — I'll get back to you soon.
                     </p>
                   </div>
                 </div>
